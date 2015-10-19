@@ -48,15 +48,18 @@ int low = 36;
 int high = 255;
 int stride = 5;
 int counter = low;
+int i = 0;
 
 void loop() {
   int button1 = digitalRead(buttonPin1);
+  Serial.println(button1);
   if (button1) return;
   
+  Serial.println("5");
   counter += stride;
   if (counter > high) {
     counter = low;
-    //Serial.println(counter);
+    Serial.println(counter);
   }
 
   // write to the digital pins  
