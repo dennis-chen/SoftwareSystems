@@ -18,12 +18,18 @@ License: Creative Commons Attribution-ShareAlike 3.0
 
 char *center(char *s, int n, char fillchar)
 {
-    // FILL THIS IN
-    //    return NULL;
+    char *centered = (char *) malloc(sizeof(char)*n);
+    for(int i = 0; i < n; i++){
+        centered[i] = fillchar;
+    }
+    int sLen = strlen(s);
+    int strInsertIndex = (n - sLen)/2;
+    memcpy(centered + sizeof(char) * strInsertIndex,s,sLen);
+    return centered;
 }
 
 
-int main (int argc, char *argv[])
+int main ()
 {
     char *s = center("Software", 30, '.');
     printf("%s\n", s);
