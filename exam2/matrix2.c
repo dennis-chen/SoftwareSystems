@@ -146,12 +146,47 @@ double *row_sum(Matrix *A) {
     double *res = malloc(A->rows * sizeof(double));
 
     for (i=0; i<A->rows; i++) {
-	total = 0.0;
-	for (j=0; j<A->cols; j++) {
-	    total += A->data[i][j];
-	}
-	res[i] = total;
+        total = 0.0;
+        for (j=0; j<A->cols; j++) {
+            total += A->data[i][j];
+        }
+        res[i] = total;
     }
+    return res;
+}
+
+// Adds up the cols of A and returns a heap-allocated array of doubles.
+double *col_sum(Matrix *A) {
+    double total;
+    int i, j;
+
+    double *res = malloc(A->cols * sizeof(double));
+
+    for (i=0; i<A->cols; i++) {
+        total = 0.0;
+        for (j=0; j<A->rows; j++) {
+            total += A->data[j][i];
+        }
+        res[i] = total;
+    }
+    return res;
+}
+
+// Adds up the diags of A and returns a heap-allocated array of doubles.
+double *diag_sum(Matrix *A) {
+    assert(A->rows == A->cols);
+    double *res = malloc(2 * sizeof(double));
+    int i;
+    double leftToRightTotal = 0.0;
+    for (i=0; i<A->rows; i++) {
+        leftToRightTotal += A->data[i][i];
+    }
+    res[0] = leftToRightTotal;
+    double rightToLeftTotal = 0.0;
+    for (i=0; i<A->rows; i++) {
+        rightToLeftTotal += A->data[i][A->rows-1-i];
+    }
+    res[1] = rightToLeftTotal;
     return res;
 }
 
@@ -168,39 +203,60 @@ double *row_sum(Matrix *A) {
 
    Feel free to use row_sum().
 */
+int is_magic_square(Matrix *A){
+    if(A->rows != A->cols){
+        return 0;
+    }
+    double *r_sum = row_sum(A);
+    double *c_sum = col_sum(A);
+    double magicSum = r_sum[0];
+    int i;
+    for(i=0; i < A->rows; i++){
+        if(r_sum[i] != magicSum || c_sum[i] != magicSum){
+            return 0;
+        }
+    }
+    double *d_sum = diag_sum(A);
+    if(d_sum[0] != magicSum || d_sum[1] != magicSum){
+        return 0;
+    }
+    return 1;
+}
 
 
 int main() {
-    int i;
+    //int i;
 
-    Matrix *A = make_matrix(3, 4);
+    Matrix *A = make_matrix(3, 3);
     consecutive_matrix(A);
     printf("A\n");
     print_matrix(A);
+    int isMagic = is_magic_square(A);
+    printf("Is magic: %d\n",isMagic);
 
-    Matrix *C = add_matrix_func(A, A);
-    printf("A + A\n");
-    print_matrix(C);
+    //Matrix *C = add_matrix_func(A, A);
+    //printf("A + A\n");
+    //print_matrix(C);
 
-    Matrix *B = make_matrix(4, 3);
-    increment_matrix(B, 1);
-    printf("B\n");
-    print_matrix(B);
+    //Matrix *B = make_matrix(4, 3);
+    //increment_matrix(B, 1);
+    //printf("B\n");
+    //print_matrix(B);
 
-    Matrix *D = mult_matrix_func(A, B);
-    printf("D\n");
-    print_matrix(D);
+    //Matrix *D = mult_matrix_func(A, B);
+    //printf("D\n");
+    //print_matrix(D);
 
-    double sum = matrix_sum1(A);
-    printf("sum = %lf\n", sum);
+    //double sum = matrix_sum1(A);
+    //printf("sum = %lf\n", sum);
 
-    sum = matrix_sum2(A);
-    printf("sum = %lf\n", sum);
+    //sum = matrix_sum2(A);
+    //printf("sum = %lf\n", sum);
 
-    double *sums = row_sum(A);
-    for (i=0; i<A->rows; i++) {
-	printf("row %d\t%lf\n", i, sums[i]);
-    }
+    //double *sums = row_sum(A);
+    //for (i=0; i<A->rows; i++) {
+	//printf("row %d\t%lf\n", i, sums[i]);
+    //}
     // should print 6, 22, 38
 
     return 0;

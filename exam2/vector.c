@@ -6,7 +6,9 @@ License: Creative Commons Attribution-ShareAlike 3.0
 */
 
 
-#include "stdio.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 typedef struct {
     double *data;
@@ -16,22 +18,23 @@ typedef struct {
 // Makes a new vector and sets all elements to zero.
 Vector *make_vector(int len) {
     Vector *vector = malloc(sizeof(Vector));
-
-    vector->data = calloc(len * sizeof(double *));
+    //ERR: calloc expects two function arguments
+    vector->data = calloc(len,sizeof(double *));
     vector->len = len;
     return vector;
 }
 
 // Frees the vector structure and its data array.
 void free_vector(Vector *vector) {
-    free(vector);
+    //ERR: free called in wrong order,
+    //we freed vector before freeing vector-> data originally
     free(vector->data);
+    free(vector);
 }
 
 // Prints the elements of a vector.
 void print_vector(Vector *vector) {
     int i;
-
     for (i=0; i<vector->len; i++) {
 	printf("%lf ", vector->data[i]);
     }
@@ -41,7 +44,6 @@ void print_vector(Vector *vector) {
 // Adds a scalar to all elements of a vector.
 void increment_vector(Vector *vector, int incr) {
     int i;
-
     for (i=0; i<vector->len; i++) {
 	vector->data[i] += incr;
     }
@@ -55,7 +57,7 @@ void consecutive_vector(Vector *vector) {
 	vector->data[i] = i;
     }
 }
-
+
 // Adds two vectors elementwise and stores the result in the given
 // destination vector (C).
 void add_vector(Vector *A, Vector *B, Vector *C) {
@@ -67,12 +69,17 @@ void add_vector(Vector *A, Vector *B, Vector *C) {
 }
 
 // Adds two vectors elementwise and returns a new vector.
-double *add_vector_func(Vector *A, Vector *B) {
+// ERR: returned pointer to double instead of pointer
+// to a vecto struct
+Vector *add_vector_func(Vector *A, Vector *B) {
     Vector *C = make_vector(A->len);
     add_vector(A, B, C);
+    //ERR: missing return statement
+    return C;
 }
 
-int main {
+//ERR: missing parentheses in main function declaration
+int main() {
     Vector *A = make_vector(4);
     consecutive_vector(A);
     printf("A\n");
@@ -91,5 +98,5 @@ int main {
     free_vector(B);
     free_vector(C);
 
-    return 0
+    return 0; //ERR: forgot semicolon after return 0
 }
